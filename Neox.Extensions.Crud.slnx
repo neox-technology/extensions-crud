@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/entityframeworkcore/">
+    <Project Path="src/entityframeworkcore/Neox.Extensions.Crud.EntityFrameworkCore/Neox.Extensions.Crud.EntityFrameworkCore.csproj" />
+  </Folder>
+  <Folder Name="/src/shared/">
+    <Project Path="src/shared/Neox.Extensions.Crud.Shared/Neox.Extensions.Crud.Shared.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Neox.Extensions.Crud.EntityFrameworkCore.Tests/Neox.Extensions.Crud.EntityFrameworkCore.Tests.csproj" />
+  </Folder>
+</Solution>
