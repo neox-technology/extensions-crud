@@ -1,6 +1,7 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Neox.Extensions.Crud.EntityFrameworkCore.Services;
+using Neox.Extensions.Crud.Shared;
 
 namespace Neox.Extensions.Crud.EntityFrameworkCore.Tests;
 
@@ -56,14 +57,43 @@ public sealed class EfCrudServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task ListAsync_ReturnsAll()
+    public async Task ListAsync_ReturnsPage()
     {
         await _service.CreateAsync(new OrderEntity { Name = "soup" });
         await _service.CreateAsync(new OrderEntity { Name = "bread" });
 
-        var listed = await _service.ListAsync();
+        var listed = await _service.ListAsync(new PageRequest());
 
-        Assert.Equal(2, listed.Count);
+        Assert.Equal(2, listed.TotalCount);
+        Assert.Equal(2, listed.Items.Count);
+        Assert.Equal(1, listed.Page);
+        Assert.Equal(PageRequest.DefaultPageSize, listed.PageSize);
+    }
+
+    [Fact]
+    public async Task ListAsync_SecondPageReturnsRemainder()
+    {
+        var first = await _service.CreateAsync(new OrderEntity { Name = "soup" });
+        var second = await _service.CreateAsync(new OrderEntity { Name = "bread" });
+        var ordered = new[] { first, second }.OrderBy(entity => entity.Id).ToArray();
+
+        var listed = await _service.ListAsync(new PageRequest(2, 1));
+
+        Assert.Equal(2, listed.TotalCount);
+        var item = Assert.Single(listed.Items);
+        Assert.Equal(ordered[1].Id, item.Id);
+    }
+
+    [Fact]
+    public void PageRequest_ThrowsWhenPageIsBelowOne()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => new PageRequest(0, 1));
+    }
+
+    [Fact]
+    public void PageRequest_ThrowsWhenPageSizeExceedsMax()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => new PageRequest(1, PageRequest.MaxPageSize + 1));
     }
 
     [Fact]

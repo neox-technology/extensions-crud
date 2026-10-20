@@ -27,4 +27,25 @@ public static class EfCrudServiceCollectionExtensions
 
         return services;
     }
+
+    public static IServiceCollection AddEfCrudService<TEntity, TContext>(
+        this IServiceCollection services,
+        object serviceKey,
+        Expression<Func<TContext, DbSet<TEntity>>> setSelector)
+        where TEntity : class, IEntity
+        where TContext : DbContext
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(serviceKey);
+        ArgumentNullException.ThrowIfNull(setSelector);
+
+        var compiled = setSelector.Compile();
+
+        services.AddKeyedScoped<ICrudService<TEntity>>(serviceKey, (provider, _) =>
+            new EfCrudService<TEntity, TContext>(
+                provider.GetRequiredService<TContext>(),
+                compiled));
+
+        return services;
+    }
 }

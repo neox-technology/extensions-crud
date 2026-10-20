@@ -7,7 +7,7 @@ public interface ICrudService<TEntity>
 
     Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
 
-    Task<IReadOnlyList<TEntity>> ListAsync(CancellationToken cancellationToken = default);
+    Task<PagedList<TEntity>> ListAsync(PageRequest page, CancellationToken cancellationToken = default);
 
     Task<TEntity?> RetrieveAsync(Guid id, CancellationToken cancellationToken = default);
 
