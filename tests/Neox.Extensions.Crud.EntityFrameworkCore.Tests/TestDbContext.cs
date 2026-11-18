@@ -9,5 +9,14 @@ public sealed class TestDbContext : DbContext
     {
     }
 
+    public DbSet<ArticleEntity> Articles => Set<ArticleEntity>();
+
     public DbSet<OrderEntity> Orders => Set<OrderEntity>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<ArticleEntity>()
+            .HasIndex(article => article.Slug)
+            .IsUnique();
+    }
 }
