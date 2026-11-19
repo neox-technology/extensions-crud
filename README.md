@@ -23,6 +23,26 @@ builder.Services.AddEfCrudService<OrderEntity, AppDbContext>(db => db.Orders);
 modelBuilder.IsolateSchema("orders");
 ```
 
+`ListAsync` filtre et trie à partir de `PageRequest`. Plusieurs filtres se combinent en ET. Sans tri, l'ordre est `Id` ascendant.
+
+```csharp
+var page = new PageRequest
+{
+    Filters =
+    [
+        new FilterCriterion(nameof(Article.CategoryId), FilterOperator.Equal, categoryId),
+    ],
+    Sorts =
+    [
+        new SortCriterion(nameof(Article.PublishedAt), SortDirection.Descending),
+    ],
+};
+
+var listed = await articles.ListAsync(page);
+```
+
+`CreateAsync` et `UpdateAsync` lèvent `UniqueConstraintViolationException` quand un index unique est violé. `ConstraintName` porte le nom de l'index ou de la colonne. Une propriété inconnue ou un type incompatible lève `InvalidCrudQueryException`.
+
 ## Contribuer
 
 Les questions et les changements passent par les issues et les pull requests du dépôt. Décrire le changement dans la pull request.

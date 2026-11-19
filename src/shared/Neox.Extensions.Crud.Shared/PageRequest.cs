@@ -22,7 +22,11 @@ public sealed record PageRequest
         PageSize = pageSize;
     }
 
+    public IReadOnlyList<FilterCriterion> Filters { get; init; } = [];
+
     public int Page { get; }
 
     public int PageSize { get; }
+
+    public IReadOnlyList<SortCriterion> Sorts { get; init; } = [];
 }

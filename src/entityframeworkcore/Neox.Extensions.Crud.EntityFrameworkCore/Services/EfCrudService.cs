@@ -31,7 +31,7 @@ public sealed class EfCrudService<TEntity, TContext> : ICrudService<TEntity>
         }
 
         Set.Add(entity);
-        await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await UniqueConstraintGuard.SaveChangesAsync(_context, cancellationToken).ConfigureAwait(false);
 
         return entity;
     }
@@ -48,11 +48,13 @@ public sealed class EfCrudService<TEntity, TContext> : ICrudService<TEntity>
     public async Task<PagedList<TEntity>> ListAsync(PageRequest page, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(page);
+        ArgumentNullException.ThrowIfNull(page.Filters);
+        ArgumentNullException.ThrowIfNull(page.Sorts);
 
-        var totalCount = await Set.CountAsync(cancellationToken).ConfigureAwait(false);
+        var filtered = CrudQueryApplier.ApplyFilters(Set.AsQueryable(), page.Filters);
+        var totalCount = await filtered.CountAsync(cancellationToken).ConfigureAwait(false);
 
-        var items = await Set
-            .OrderBy(entity => entity.Id)
+        var items = await CrudQueryApplier.ApplySorts<TEntity>(filtered, page.Sorts)
             .Skip((page.Page - 1) * page.PageSize)
             .Take(page.PageSize)
             .ToListAsync(cancellationToken)
@@ -69,7 +71,7 @@ public sealed class EfCrudService<TEntity, TContext> : ICrudService<TEntity>
         ArgumentNullException.ThrowIfNull(entity);
 
         Set.Update(entity);
-        await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await UniqueConstraintGuard.SaveChangesAsync(_context, cancellationToken).ConfigureAwait(false);
 
         return entity;
     }
