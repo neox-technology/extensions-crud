@@ -8,4 +8,5 @@ public enum FilterOperator
     GreaterThanOrEqual,
     LessThan,
     LessThanOrEqual,
+    NotEqual,
 }

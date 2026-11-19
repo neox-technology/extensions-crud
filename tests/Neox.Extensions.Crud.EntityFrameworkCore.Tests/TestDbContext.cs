@@ -11,6 +11,8 @@ public sealed class TestDbContext : DbContext
 
     public DbSet<ArticleEntity> Articles => Set<ArticleEntity>();
 
+    public DbSet<NoteEntity> Notes => Set<NoteEntity>();
+
     public DbSet<OrderEntity> Orders => Set<OrderEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -18,5 +20,8 @@ public sealed class TestDbContext : DbContext
         modelBuilder.Entity<ArticleEntity>()
             .HasIndex(article => article.Slug)
             .IsUnique();
+
+        modelBuilder.Entity<NoteEntity>()
+            .OwnsMany(note => note.Tags);
     }
 }

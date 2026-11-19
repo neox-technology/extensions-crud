@@ -51,7 +51,7 @@ public sealed class EfCrudService<TEntity, TContext> : ICrudService<TEntity>
         ArgumentNullException.ThrowIfNull(page.Filters);
         ArgumentNullException.ThrowIfNull(page.Sorts);
 
-        var filtered = CrudQueryApplier.ApplyFilters(Set.AsQueryable(), page.Filters);
+        var filtered = CrudQueryApplier.ApplyFilters(Set.AsQueryable(), page.Filters, page.Filter);
         var totalCount = await filtered.CountAsync(cancellationToken).ConfigureAwait(false);
 
         var items = await CrudQueryApplier.ApplySorts<TEntity>(filtered, page.Sorts)

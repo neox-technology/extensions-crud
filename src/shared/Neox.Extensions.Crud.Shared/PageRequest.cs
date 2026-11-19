@@ -22,6 +22,8 @@ public sealed record PageRequest
         PageSize = pageSize;
     }
 
+    public FilterExpression? Filter { get; init; }
+
     public IReadOnlyList<FilterCriterion> Filters { get; init; } = [];
 
     public int Page { get; }

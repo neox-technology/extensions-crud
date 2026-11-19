@@ -5,3 +5,4 @@ Index des features. Chaque spec vit dans `specs/features/<slug>.md`.
 | Slug | Status | Summary |
 |------|--------|---------|
 | list-filter-sort-uniqueness | done | Filtres, tri et conflit d'unicité sur ICrudService |
+| odata-query | done | Traduction d'une requête OData vers ICrudService |
